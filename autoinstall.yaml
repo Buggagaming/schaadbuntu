@@ -3,7 +3,7 @@ autoinstall:
 
   locale: "de_CH.UTF-8"
   keyboard:
-    layout: ch                                        
+    layout: ch
     variant: ""
 
   network:
@@ -13,9 +13,9 @@ autoinstall:
         dhcp4: true
 
   identity:
-    hostname: dein-hostname
+    hostname: Userhost
     username: root
-    password: "$VerschlüsseltesPasswort"
+    password: "$6$gA/3u18iT2CybdMn$wUF19HJuDhjiW1BpGkMYI6D0Lt3YGfG.QlzTbS/UhJc38VLMBKMurpMZ5qWJ0YlgUOrOB.y721EVKWT1uL3xX0"  ########## Passwort: root1 ##########
 
   ssh:
     install-server: true
