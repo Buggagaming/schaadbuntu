@@ -1,0 +1,27 @@
+autoinstall:
+  version: 1
+
+  locale: "de_CH.UTF-8"
+  keyboard:
+    layout: ch                                        
+    variant: ""
+
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: true
+
+  identity:
+    hostname: dein-hostname
+    username: root
+    password: "$VerschlüsseltesPasswort"
+
+  ssh:
+    install-server: true
+    allow-pw: true
+    authorized-keys: []
+
+  storage:
+    layout:
+      name: direct
