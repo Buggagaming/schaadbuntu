@@ -19,8 +19,7 @@ terraform {
 provider "proxmox" {
   endpoint = "https://proxmox.cecyourtech.ch"
   insecure = true
-  username = "terraform@pve"
-  password = "terraform"
+  api_token = "terraform@pve!API-Token=947b424e-ed92-48a0-a302-da8f1f8c18e0"
 }
 
 ################################# SSH Keys #################################
@@ -67,23 +66,6 @@ resource "null_resource" "install_pihole" {
 
 ################################# ISO und LXC download #################################
 
-resource "proxmox_virtual_environment_download_file" "Ubuntu" {
-  content_type = "iso"
-  datastore_id = "local"
-  node_name    = "proxmox"
-  url          = "https://releases.ubuntu.com/24.04.3/ubuntu-24.04.3-live-server-amd64.iso"
-  file_name = "Ubuntu_server.iso"
-}
-
-resource "proxmox_virtual_environment_download_file" "Ubuntu_D" {
-  content_type = "iso"
-  datastore_id = "local"
-  node_name    = "proxmox"
-  url          = "https://releases.ubuntu.com/24.04.3/ubuntu-24.04.3-desktop-amd64.iso"
-  file_name = "Ubuntu.iso"
-}
-
-
 resource "proxmox_virtual_environment_download_file" "PiHole-LXC" {
   content_type = "vztmpl"
   datastore_id = "local"
@@ -91,15 +73,13 @@ resource "proxmox_virtual_environment_download_file" "PiHole-LXC" {
   url          = "http://download.proxmox.com/images/system/ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
 }
 
-################################# VMs #################################
+################################# Server VMs #################################
 
-resource "proxmox_virtual_environment_vm" "Terraform"{
-  name = "Terraform"
+resource "proxmox_virtual_environment_vm" "WinServer1"{
+  name = "WinClient1"
   node_name = "proxmox"
-  vm_id = "501"
+  vm_id = "801"
 
-  depends_on = [
-    proxmox_virtual_environment_download_file.Ubuntu]
 initialization {
 }
   agent {
@@ -121,19 +101,19 @@ initialization {
     bridge = "vmbr0"
   }
   cdrom {
-    file_id = "local:iso/Ubuntu_server.iso"
+    file_id = "local:iso/Windows_C.iso"
   }
 }
 
 ################################# Client VMs #################################
-########## User 01 ##########
-resource "proxmox_virtual_environment_vm" "User01"{
-  name = "User01"
-  node_name = "proxmox"
-  vm_id = "510"
 
-  depends_on = [
-    proxmox_virtual_environment_download_file.Ubuntu_D]
+########## User 01 ##########
+
+resource "proxmox_virtual_environment_vm" "WinClient01"{
+  name = "WinClient01"
+  node_name = "proxmox"
+  vm_id = "901"
+
 initialization {
 }
   agent {
@@ -150,24 +130,23 @@ initialization {
   disk {
     datastore_id = "local-lvm"
     interface = "scsi0"
+    size = 60
   }
   network_device {
     bridge = "vmbr0"
   }
   cdrom {
-    file_id = "local:iso/Ubuntu.iso"
+    file_id = "local:iso/Windows_C.iso"
   }
 }
 
 ########## User 02 ##########
 
-resource "proxmox_virtual_environment_vm" "User02"{
-  name = "User02"
+resource "proxmox_virtual_environment_vm" "WinClient02"{
+  name = "WinClient02"
   node_name = "proxmox"
-  vm_id = "511"
+  vm_id = "902"
 
-  depends_on = [
-    proxmox_virtual_environment_download_file.Ubuntu_D]
 initialization {
 }
   agent {
@@ -184,24 +163,23 @@ initialization {
   disk {
     datastore_id = "local-lvm"
     interface = "scsi0"
+    size = 60
   }
   network_device {
     bridge = "vmbr0"
   }
   cdrom {
-    file_id = "local:iso/Ubuntu.iso"
+    file_id = "local:iso/Windows_C.iso"
   }
 }
 
 ########## User 03 ##########
 
-resource "proxmox_virtual_environment_vm" "User03"{
-  name = "User03"
+resource "proxmox_virtual_environment_vm" "WinClient01"{
+  name = "WinClient03"
   node_name = "proxmox"
-  vm_id = "512"
+  vm_id = "903"
 
-  depends_on = [
-    proxmox_virtual_environment_download_file.Ubuntu_D]
 initialization {
 }
   agent {
@@ -218,14 +196,16 @@ initialization {
   disk {
     datastore_id = "local-lvm"
     interface = "scsi0"
+    size = 60
   }
   network_device {
     bridge = "vmbr0"
   }
   cdrom {
-    file_id = "local:iso/Ubuntu.iso"
+    file_id = "local:iso/Windows_C.iso"
   }
 }
+
 ################################# LXC Container #################################
 
 resource "proxmox_virtual_environment_container" "PI-Hole" {
